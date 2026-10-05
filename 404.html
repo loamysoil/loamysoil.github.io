@@ -806,7 +806,7 @@ const SITE = 'https://liamowen.org';
 const segs = () => location.pathname.replace(/index\.html$/, '').split('/').filter(Boolean);
 // GoatCounter analytics (https://www.goatcounter.com). Set GC_CODE to your site code to switch it on.
 // The site is a single page, so each route change is counted by hand as a page view.
-const GC_CODE = '';
+const GC_CODE = 'liamowen';
 let gcReady = false, gcLast = '';
 function countView(path, title){
   if (!GC_CODE || /^(localhost|127\.)/.test(location.hostname) || path === gcLast) return;
