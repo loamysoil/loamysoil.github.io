@@ -317,6 +317,8 @@ main{min-height:100dvh}
 .likes dt{font-family:var(--mono);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:10px}
 .likes-text{max-width:52ch;line-height:1.5}
 .about-photo{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:var(--r);margin-bottom:clamp(32px,4vw,56px)}
+.about-copy{max-width:58ch;font-size:1.08rem;line-height:1.6;letter-spacing:-.005em}
+.about-copy p+p{margin-top:1.1em}
 .col-a .statement{font-size:clamp(2rem,3.7vw,3.5rem);margin-bottom:clamp(24px,3vw,36px)}
 .big-link{display:block;font-size:clamp(2rem,6.6vw,6.4rem);line-height:1;letter-spacing:-.05em;font-weight:600;word-break:break-word;transition:opacity .3s}
 .big-link:hover{opacity:.55}
@@ -714,8 +716,11 @@ function viewAbout(){
   <section class="wrap about-grid">
     <div class="col-a">
       <img class="about-photo first" src="${IMG}about/liam-golf.jpg" alt="Liam Owen on the golf course" aria-label="View larger: Liam Owen on the golf course" width="1600" height="1067" fetchpriority="high" data-zoom tabindex="0" role="button">
-      <h1 class="statement">I’m a Digital Designer Who Loves Making Great Creative.</h1>
-      <p style="font-size:1.25rem;line-height:1.4;letter-spacing:-.01em;max-width:34ch">I’m passionate, results-driven, and believe no task is too big, too small, or too weird to take on.</p>
+      <h1 class="statement">I’m a Digital Designer Who Loves Making Things People Care About</h1>
+      <div class="about-copy">
+        <p>I’m a digital designer who enjoys solving problems through thoughtful, well-crafted design. After getting my start creating work for Gamecock Athletics, I spent time designing campaigns for the South Carolina Education Lottery before finding my way into golf at Arccos. Now I get to combine my love for design with a sport I’m genuinely passionate about, creating work that helps golfers play better while building a brand people connect with.</p>
+        <p>I’m passionate, curious, and results-driven. I enjoy jumping between digital, print, branding, photography, and whatever else needs to get made. No project is too big, too small, or too weird.</p>
+      </div>
       <dl class="likes">
         <div><dt>Music</dt><dd><ul class="chips">${['Cage the Elephant','Run the Jewels','Frank Ocean','Oasis','Car Seat Headrest','Peach Pit','Dijon','Mk.Gee'].map(a => `<li>${a}</li>`).join('')}</ul></dd></div>
         <div><dt>Film</dt><dd><ul class="chips">${['The Grand Budapest Hotel','Goodfellas','Interstellar','Star Wars','Trainspotting'].map(a => `<li>${a}</li>`).join('')}</ul></dd></div>
