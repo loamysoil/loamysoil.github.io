@@ -413,7 +413,7 @@ main{min-height:100dvh}
 </head>
 
 <body>
-<a class="skip" href="#main" data-skip>Skip to content</a>
+<a class="skip" href="#main" data-skip>Skip to Content</a>
 
 <header class="nav">
   <div class="wrap">
@@ -592,7 +592,7 @@ function viewHome(){
         <h1 id="h1">Hi, I’m Liam</h1>
         <p>Graphic designer at Arccos Golf, working across product launches, packaging, brand campaigns and web.</p>
         <div class="hero-cta">
-          <a class="btn primary" href="/#work" data-scroll="work">View work ${arrow}</a>
+          <a class="btn primary" href="/#work" data-scroll="work">View Work ${arrow}</a>
           <a class="btn ghost" href="resume/LiamOwen_GraphicDesigner_Resume.pdf" target="_blank" rel="noopener">Resume</a>
         </div>
       </div>
@@ -601,7 +601,7 @@ function viewHome(){
 
   <section class="sec work car-wrap" id="work" aria-labelledby="work-h">
     <div class="wrap sec-head">
-      <h2 id="work-h">Selected work</h2>
+      <h2 id="work-h">Selected Work</h2>
       <div class="car-btns">
         <button class="car-btn" id="car-prev" type="button" aria-label="Previous projects">&larr;</button>
         <button class="car-btn" id="car-next" type="button" aria-label="Next projects">&rarr;</button>
@@ -618,7 +618,7 @@ function viewHome(){
   </section>
 
   <section class="wrap sec" aria-labelledby="cl-h">
-    <h2 id="cl-h" class="rv">Selected clients</h2>
+    <h2 id="cl-h" class="rv">Selected Clients</h2>
     <div class="clients" style="--cols:${Math.ceil(clients.length / Math.ceil(clients.length / 6))}">${clients.map(logo).join('')}</div>
   </section>`;
 }
@@ -708,8 +708,8 @@ function viewProject(slug){
   ${(p.shoot || []).length ? shootMosaic(p) : ''}
 
   <div class="wrap"><nav class="pn" aria-label="More projects">
-    <a class="pn-prev" href="/work/${prev.slug}"><small>Previous project</small><b><span class="pa" aria-hidden="true">&larr;</span> ${esc(prev.title)}</b></a>
-    <a class="pn-next" href="/work/${next.slug}"><small>Next project</small><b>${esc(next.title)} <span class="pa" aria-hidden="true">&rarr;</span></b></a>
+    <a class="pn-prev" href="/work/${prev.slug}"><small>Previous Project</small><b><span class="pa" aria-hidden="true">&larr;</span> ${esc(prev.title)}</b></a>
+    <a class="pn-next" href="/work/${next.slug}"><small>Next Project</small><b>${esc(next.title)} <span class="pa" aria-hidden="true">&rarr;</span></b></a>
   </nav></div>`;
 }
 
@@ -724,7 +724,7 @@ function viewAbout(){
         <div><dt>Music</dt><dd><ul class="chips">${['Cage the Elephant','Run the Jewels','Frank Ocean','Oasis','Car Seat Headrest','Peach Pit','Dijon','Mk.Gee'].map(a => `<li>${a}</li>`).join('')}</ul></dd></div>
         <div><dt>Film</dt><dd><ul class="chips">${['The Grand Budapest Hotel','Goodfellas','Interstellar','Star Wars','Trainspotting'].map(a => `<li>${a}</li>`).join('')}</ul></dd></div>
         <div><dt>Collecting</dt><dd><ul class="chips">${['Vintage clothes','Hats','Furniture','Books','Prints','Legos'].map(a => `<li>${a}</li>`).join('')}</ul></dd></div>
-        <div><dt>Also into</dt><dd class="likes-text">Gamecock sports, taking photos on my Olympus Pen Lite 6, and pretty much everything pop culture. I play golf (17 HDCP and falling) and I speak enough French to get by. Finnish, less so.</dd></div>
+        <div><dt>Also Into</dt><dd class="likes-text">Gamecock sports, taking photos on my Olympus Pen Lite 6, and pretty much everything pop culture. I play golf (17 HDCP and falling) and I speak enough French to get by. Finnish, less so.</dd></div>
       </dl>
     </div>
     <div class="col-b rv">
