@@ -319,7 +319,6 @@ main{min-height:100dvh}
 .likes-text{max-width:52ch;line-height:1.5}
 .about-photo{display:block;width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:var(--r);margin-bottom:clamp(32px,4vw,56px)}
 .col-a .statement{font-size:clamp(2rem,3.7vw,3.5rem);margin-bottom:clamp(24px,3vw,36px)}
-.contact-list{display:grid;gap:clamp(28px,4vw,48px);padding-bottom:clamp(64px,10vw,140px)}
 .big-link{display:block;font-size:clamp(2rem,6.6vw,6.4rem);line-height:1;letter-spacing:-.05em;font-weight:600;word-break:break-word;transition:opacity .3s}
 .big-link:hover{opacity:.55}
 .big-link small{display:block;font-family:var(--mono);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:400;margin-bottom:10px}
@@ -425,7 +424,6 @@ main{min-height:100dvh}
     <nav class="nav-links" aria-label="Primary">
       <a href="/" data-nav="work">Work</a>
       <a href="/aboutresume" data-nav="about">About<span class="hide-sm">&nbsp;&amp; Resume</span></a>
-      <a href="/contact" data-nav="contact">Contact</a>
       <button class="theme" id="theme" type="button" aria-label="Toggle light and dark theme"><i></i></button>
     </nav>
     <button class="menu-btn" id="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span></button>
@@ -439,9 +437,8 @@ main{min-height:100dvh}
     <nav class="drawer-links" aria-label="Mobile">
       <a href="/" data-nav="work" style="--i:0">Work</a>
       <a href="/aboutresume" data-nav="about" style="--i:1">About &amp; Resume</a>
-      <a href="/contact" data-nav="contact" style="--i:2">Contact</a>
     </nav>
-    <div class="drawer-foot" style="--i:3">
+    <div class="drawer-foot" style="--i:2">
       <div class="theme-seg" id="theme-seg" role="group" aria-label="Theme" data-active="dark">
         <button type="button" data-mode="light" aria-pressed="false">Light</button>
         <button type="button" data-mode="dark" aria-pressed="true">Dark</button>
@@ -458,7 +455,6 @@ main{min-height:100dvh}
   <div class="wrap">
     <a class="foot-mail" href="mailto:liam@liamowen.org">liam@liamowen.org</a>
     <div class="foot-row">
-      <a class="btn primary" href="/contact">Contact <span class="arr" aria-hidden="true">&rarr;</span></a>
       <a class="tel" href="tel:+19802166686">+1 (980) 216-6686</a>
       <ul class="soc" aria-label="Social profiles"></ul>
     </div>
@@ -751,18 +747,6 @@ function viewAbout(){
   </section>`;
 }
 
-function viewContact(){
-  return `
-  <section class="wrap page-top">
-    <h1 class="statement">Let’s Make Something Great.</h1>
-  </section>
-  <section class="wrap contact-list">
-    <a class="big-link" href="mailto:liam@liamowen.org"><small>Email</small>liam@liamowen.org</a>
-    <a class="big-link" href="tel:+19802166686"><small>Phone</small>+1 (980) 216-6686</a>
-    <ul class="soc">${socialItems()}</ul>
-  </section>`;
-}
-
 /* ---------- Social profiles (official one-color brand glyphs from Simple Icons) ---------- */
 const socials = [
   ['Dribbble','dribbble','https://dribbble.com/owenlb'],
@@ -807,7 +791,7 @@ const main = document.getElementById('main');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 let io;
 
-/* Real paths, same structure as the old site: /, /aboutresume, /contact, /work/<slug> */
+/* Real paths, same structure as the old site: /, /aboutresume, /work/<slug> */
 const SITE = 'https://liamowen.org';
 const segs = () => location.pathname.replace(/index\.html$/, '').split('/').filter(Boolean);
 // GoatCounter analytics (https://www.goatcounter.com). Set GC_CODE to your site code to switch it on.
@@ -845,7 +829,6 @@ function route(){
   let html, nav = 'work', path = '/', img = 'images/hero/hero.jpg';
   let title = 'Liam Owen, Digital Designer', desc = 'Liam Owen is a digital designer working across product launches, packaging, brand campaigns and web. Currently at Arccos Golf.';
   if (a === 'aboutresume' || a === 'about'){ html = viewAbout(); title = 'About & Resume | Liam Owen'; desc = 'Digital designer and University of South Carolina graduate. Experience, skills, tools, awards and a few things I like.'; nav = 'about'; path = '/aboutresume'; img = 'images/about/liam-golf.jpg'; }
-  else if (a === 'contact'){ html = viewContact(); title = 'Contact | Liam Owen'; desc = 'Get in touch with Liam Owen.'; nav = 'contact'; path = '/contact'; }
   else if (a === 'work' && b && projects.some(x => x.slug === b)){
     const p = projects.find(x => x.slug === b); html = viewProject(b); title = `${p.title} | Liam Owen`;
     desc = (p.lede + ' ' + (p.body[0] || '')).trim().slice(0, 190); path = '/work/' + b; img = `images/${p.dir}/${p.hero}.jpg`;
@@ -993,7 +976,7 @@ document.addEventListener('click', e => {
 
 document.getElementById('sitemap').innerHTML = `
   <div class="sm-col"><h2>Pages</h2><ul>
-    <li><a href="/">Work</a></li><li><a href="/aboutresume">About &amp; Resume</a></li><li><a href="/contact">Contact</a></li>
+    <li><a href="/">Work</a></li><li><a href="/aboutresume">About &amp; Resume</a></li>
     <li><a href="resume/LiamOwen_GraphicDesigner_Resume.pdf" target="_blank" rel="noopener">Resume PDF</a></li></ul></div>
   <div class="sm-col two"><h2>Work</h2><ul>${projects.map(p => `<li><a href="/work/${p.slug}">${esc(p.title)}</a></li>`).join('')}</ul></div>`;
 

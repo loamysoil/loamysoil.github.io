@@ -44,7 +44,6 @@ routes = [
     ("aboutresume", "About & Resume | Liam Owen",
      "Digital designer and University of South Carolina graduate. Experience, skills, tools, awards and a few things I like.",
      "images/about/liam-golf.jpg"),
-    ("contact", "Contact | Liam Owen", "Get in touch with Liam Owen.", "images/hero/hero.jpg"),
 ]
 for p in projects:
     desc = (p["lede"] + " " + p["body0"]).strip()[:190]
