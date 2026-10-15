@@ -753,10 +753,8 @@ function viewAbout(){
 
 /* ---------- Social profiles (official one-color brand glyphs from Simple Icons) ---------- */
 const socials = [
-  ['Dribbble','dribbble','https://dribbble.com/owenlb'],
   ['Instagram','instagram','https://instagram.com/liamowen.design'],
   ['LinkedIn','linkedin','https://www.linkedin.com/in/liam-owen-69693b158/'],
-  ['TikTok','tiktok','https://www.tiktok.com/@liamowen.design'],
 ];
 const socialItems = () => socials.map(([n,f,u]) => `<li><a href="${u}" target="_blank" rel="noopener" aria-label="${n}"><i style="--s:url(${IMG}social/${f}.svg)"></i></a></li>`).join('');
 document.querySelector('.foot .soc').innerHTML = socialItems();
