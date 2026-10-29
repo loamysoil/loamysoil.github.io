@@ -1061,18 +1061,22 @@ float noise(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);
   return mix(mix(hash(i),hash(i+vec2(1.,0.)),u.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),u.x),u.y);}
 float fbm(vec2 p){float v=0.,a=.5;mat2 m=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<4;i++){v+=a*noise(p);p=m*p;a*=.5;}return v;}
 float edge(vec2 p,float t,float k){
-  float ang=.56+.06*sin(t*.11)+uMouse.x*.07;
-  vec2 n=vec2(sin(ang),cos(ang));
-  float wob=(fbm(p*.55+vec2(t*.03,-t*.02))-.5)*.06;
-  vec2 dm=p-uMouse;float bend=exp(-dot(dm,dm)*5.)*(.05+.07*uEnergy);
-  return dot(p,n)-(.12+.05*sin(t*.07)+uMouse.y*.05)+wob-bend+k;
+  // one huge rounded square, centred off-canvas behind the copy, turning slowly; its rim is the flare line
+  float a=t*.07+uMouse.x*.10;
+  vec2 q=p-(vec2(-1.,-.75)+uMouse*.04);
+  float cs=cos(a),sn=sin(a);q=mat2(cs,sn,-sn,cs)*q;
+  vec2 dq=abs(q)-vec2(1.32)+.22;
+  float sd=length(max(dq,0.))+min(max(dq.x,dq.y),0.)-.22;
+  vec2 dm=p-uMouse;float bend=exp(-dot(dm,dm)*5.)*(.025+.045*uEnergy);
+  return sd-bend+k;
 }
 void main(){
   vec2 st=gl_FragCoord.xy/uRes;
   vec2 p=(gl_FragCoord.xy-.5*uRes)/uRes.y;
   float t=uTime,d=edge(p,t,0.);
-  float f1=fbm(p*.9+vec2(t*.02,t*.015));
-  float f2=fbm(p*1.6-vec2(t*.03,0.)+f1);
+  float f1=fbm(p*.9+vec2(t*.06,t*.045));
+  float f2=fbm(p*1.6-vec2(t*.08,-t*.02)+f1);
+  float e=uEnergy+.14+.10*sin(t*.7);
   vec3 lightC=mix(vec3(.53,.53,.64),vec3(.84,.83,.89),smoothstep(.2,.8,f2));
   lightC=mix(lightC,vec3(.72,.70,.82),smoothstep(-.4,.6,p.y)*.25);
   vec3 darkC=mix(vec3(.035,.035,.10),vec3(.13,.12,.29),smoothstep(.25,.85,f1));
@@ -1080,14 +1084,19 @@ void main(){
   float side=smoothstep(-.022,.022,d);
   vec3 col=mix(darkC,lightC,side);
   col*=1.-.22*exp(-max(d,0.)*12.)*side;
+  // keep the copy (bottom-left) on dark: the light side falls into shadow there
+  float zone=smoothstep(.95,.3,length(vec2(st.x*.85,st.y*1.25)));
+  col=mix(col,col*mix(1.,.36,zone),side);
   vec3 dd=vec3(edge(p,t,-.0055),d,edge(p,t,.0055))-.012;
   vec3 glint=exp(-(dd*dd)/(.0075*.0075));
-  float shimmer=.5+.5*fbm(vec2(dot(p,vec2(.85,-.52))*6.-t*.4,t*.1));
-  col+=glint*vec3(1.,.97,1.05)*shimmer*(.62+.8*uEnergy);
+  float along=atan(p.y+.75,p.x+1.)*3.;
+  float shimmer=.5+.5*fbm(vec2(along*6.-t*1.1,t*.25));
+  float sweep=exp(-pow(fract(along*.3-t*.11)-.5,2.)*70.);
+  col+=glint*vec3(1.,.97,1.05)*(shimmer*(.62+.8*e)+sweep*1.1)*(1.-.45*zone);
   col+=vec3(.58,.58,.76)*exp(-abs(d)*9.)*.16;
-  vec3 rb=.5+.5*cos(6.2832*(p.x*1.4+t*.05+vec3(0.,.33,.67)));
+  vec3 rb=.5+.5*cos(6.2832*(p.x*1.4+t*.12+vec3(0.,.33,.67)));
   col+=rb*exp(-abs(d-.026)/.022)*smoothstep(.2,-.45,p.y)*.26;
-  vec2 dm=p-uMouse;col+=vec3(.20,.20,.29)*exp(-dot(dm,dm)*3.)*(.32+.45*uEnergy)*mix(.45,1.,side);
+  vec2 dm=p-uMouse;col+=vec3(.20,.20,.29)*exp(-dot(dm,dm)*3.)*(.32+.45*e)*mix(.45,1.,side);
   col*=mix(.6,1.,smoothstep(1.3,.25,length((st-vec2(.6,.62))*vec2(1.,.9))));
   col+=(hash(gl_FragCoord.xy+fract(t*7.3)*113.)-.5)*.085;
   gl_FragColor=vec4(col,1.);
