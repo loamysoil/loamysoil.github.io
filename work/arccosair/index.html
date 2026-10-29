@@ -16,7 +16,6 @@
 <link rel="canonical" href="https://liamowen.org/work/arccosair">
 <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" as="image" href="images/hero/hero.jpg">
 
 <style>
 /* ---------- Fonts (self-hosted Inter and Roboto Mono, SIL OFL / Apache 2.0) ---------- */
@@ -118,9 +117,9 @@ main{min-height:100dvh}
 /* ---------- Hero: one layered stage (photo underneath, type and buttons on top) ---------- */
 .hero{padding-top:clamp(12px,2vw,24px)}
 .hero-stage{position:relative;display:flex;align-items:flex-end;isolation:isolate;overflow:hidden;border-radius:var(--r);color:#fff;min-height:clamp(430px,68dvh,720px)}
-.hero-bg{position:absolute;inset:0;z-index:-1;overflow:hidden;border-radius:inherit;background:#3b4a35}
-.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;transform:scale(1.1)}
-.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(6,10,7,.66) 0%,rgba(6,10,7,.34) 48%,rgba(6,10,7,0) 88%)}
+.hero-bg{position:absolute;inset:0;z-index:-1;overflow:hidden;border-radius:inherit;background:linear-gradient(150deg,#1a1a38 0%,#0c0c1e 46%,#6f6e88 64%,#c3c2d0 100%)}
+.hero-gl{position:absolute;inset:0;display:block;width:100%;height:100%}
+.hero-bg::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(20deg,rgba(5,5,14,.55) 0%,rgba(5,5,14,.18) 40%,rgba(5,5,14,0) 70%)}
 .hero-over{padding:clamp(28px,4.5vw,72px);max-width:min(100%,1100px)}
 .hero h1{font-size:clamp(2.6rem,min(7vw,11.5vh),7rem);line-height:.98;letter-spacing:-.05em;font-weight:600;max-width:22ch;text-wrap:balance}
 .hero h1 em{font-style:italic;font-weight:500;padding-bottom:.08em}
@@ -317,10 +316,8 @@ html.cursor-on,html.cursor-on *{cursor:none!important}
 html.cursor-on iframe{cursor:auto!important}
 @media (prefers-reduced-transparency:reduce){.cursor i{-webkit-backdrop-filter:none;backdrop-filter:none;background:color-mix(in srgb,var(--ink) 38%,transparent)}}
 
-/* ---------- Hero orb: small noisy gradient that drifts on its own and leans toward the cursor ---------- */
-.orb{--orb:clamp(156px,23vw,330px);position:absolute;z-index:0;pointer-events:none;right:clamp(14px,5vw,84px);top:clamp(14px,9%,70px);width:var(--orb);height:var(--orb);will-change:transform}
+/* ---------- Hero: full-bleed WebGL field (see initHero) sits in .hero-bg; copy stays above it ---------- */
 .hero-over{position:relative;z-index:1}
-@media (max-width:760px){.orb{--orb:158px;right:8px;top:8px}}
 
 @media (prefers-reduced-motion:no-preference){
   .js .card .ph img{opacity:0;filter:blur(16px);transition:opacity 1.2s var(--ease),filter 1.2s var(--ease),transform 1.2s var(--ease)}
@@ -335,7 +332,6 @@ html.cursor-on iframe{cursor:auto!important}
   .hero-bg{animation:unmask 1.8s var(--ease) both}
   .about-photo.first{animation:unmask 1.8s var(--ease) .1s both}
   @supports (animation-timeline:scroll()){
-    .hero-bg img{animation:depth linear both;animation-timeline:scroll(root);animation-range:0 100vh}
   }
   .js .stat::before{transform:scaleY(0);transform-origin:top;transition:transform 1.6s var(--ease);transition-delay:var(--d,0s)}
   .js .stat.in::before{transform:scaleY(1)}
@@ -379,8 +375,7 @@ html.cursor-on iframe{cursor:auto!important}
   .brand svg{height:30px;width:30px}
   :root{--r:16px}
   .hero-stage{min-height:max(440px,66dvh);align-items:flex-end}
-  .hero-bg::after{background:linear-gradient(0deg,rgba(6,10,7,.66) 0%,rgba(6,10,7,.34) 48%,rgba(6,10,7,0) 88%)}
-  .hero-bg img{object-position:60% 45%}
+  .hero-bg::after{background:linear-gradient(0deg,rgba(5,5,14,.6) 0%,rgba(5,5,14,.2) 50%,rgba(5,5,14,0) 85%)}
   .hero-over{padding:26px 22px}
   .about-photo{aspect-ratio:4/3;margin-bottom:28px}
   .car-btns{display:none}
@@ -582,8 +577,7 @@ function viewHome(){
   return `
   <section class="wrap hero" aria-labelledby="h1">
     <div class="hero-stage">
-      <div class="hero-bg"><img src="${IMG}hero/hero.jpg" alt="Low view across tall grass to a sand bunker and mature trees on a golf course" width="2400" height="1800" fetchpriority="high"></div>
-      <canvas class="orb" aria-hidden="true"></canvas>
+      <div class="hero-bg"><canvas class="hero-gl" aria-hidden="true"></canvas></div>
       <div class="hero-over">
         <h1 id="h1">Hi, I’m Liam</h1>
         <p>Graphic Designer at Arccos Golf, working across product launches, packaging, brand campaigns and web.</p>
@@ -844,7 +838,7 @@ function route(){
   observe();
   initStats();
   initCarousel();
-  initOrb();
+  initHero();
 }
 
 /* One wiring for every side-scroller: arrows, edge-aware disabled state, and mouse drag. */
@@ -1050,47 +1044,55 @@ document.addEventListener('keydown', e => {
 
 /* anything that arrives with an old #/ address is mapped to the real path */
 if (/^#\//.test(location.hash)){ const h = location.hash.slice(2); history.replaceState({}, '', h === 'about' ? '/aboutresume' : '/' + h); }
-/* ---------- Hero orb: a small WebGL gradient (domain-warped noise + film grain). It drifts on its own, leans toward the
-   cursor wherever it is on the page, and ripples when the cursor moves fast. Pauses off-screen; static with reduced motion. ---------- */
-let orbStop = null;
-function initOrb(){
-  if (orbStop){ orbStop(); orbStop = null; }
-  const cv = document.querySelector('.orb'); if (!cv) return;
-  const gl = cv.getContext('webgl', { alpha:true, premultipliedAlpha:true, antialias:false, powerPreference:'low-power' }); if (!gl) return;
+/* ---------- Hero: a full-bleed WebGL field in the spirit of a soft, out-of-focus glass photograph. Lavender light and deep
+   navy are split by a drifting diagonal glass edge with an iridescent glint; everything breathes slowly on its own, the cursor
+   bends the edge and lights the glass wherever it is on the page, and fast movement makes the glint flare. Film grain on top.
+   Pauses off-screen or in a hidden tab, renders one still frame with reduced motion, and falls back to the CSS gradient. ---------- */
+let heroStop = null;
+function initHero(){
+  if (heroStop){ heroStop(); heroStop = null; }
+  const cv = document.querySelector('.hero-gl'); if (!cv) return;
+  const gl = cv.getContext('webgl', { alpha:false, antialias:false, depth:false, powerPreference:'low-power' }); if (!gl) return;
   const VS = 'attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}';
   const FS = `precision highp float;
 uniform vec2 uRes;uniform float uTime;uniform vec2 uMouse;uniform float uEnergy;
 float hash(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
 float noise(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);
   return mix(mix(hash(i),hash(i+vec2(1.,0.)),u.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),u.x),u.y);}
-float fbm(vec2 p){float v=0.,a=.5;mat2 m=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<5;i++){v+=a*noise(p);p=m*p;a*=.5;}return v;}
+float fbm(vec2 p){float v=0.,a=.5;mat2 m=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<4;i++){v+=a*noise(p);p=m*p;a*=.5;}return v;}
+float edge(vec2 p,float t,float k){
+  float ang=.56+.06*sin(t*.11)+uMouse.x*.07;
+  vec2 n=vec2(sin(ang),cos(ang));
+  float wob=(fbm(p*.55+vec2(t*.03,-t*.02))-.5)*.06;
+  vec2 dm=p-uMouse;float bend=exp(-dot(dm,dm)*5.)*(.05+.07*uEnergy);
+  return dot(p,n)-(.12+.05*sin(t*.07)+uMouse.y*.05)+wob-bend+k;
+}
 void main(){
-  vec2 uv=(gl_FragCoord.xy*2.-uRes)/uRes.y;
-  float r=length(uv),core=.70,t=uTime*.16;
-  float ang=t*.5+uEnergy*.6;mat2 R=mat2(cos(ang),-sin(ang),sin(ang),cos(ang));
-  vec2 p=R*uv*1.35,m=uMouse*.9;
-  vec2 q=vec2(fbm(p+vec2(0.,t)+m*.5),fbm(p+vec2(5.2,1.3)-t));
-  vec2 w=vec2(fbm(p+3.*q+vec2(1.7,9.2)+t*.8+m),fbm(p+3.*q+vec2(8.3,2.8)-t*.6));
-  float f=fbm(p+3.*w)+uEnergy*.22*sin(r*14.-uTime*6.);
-  vec3 c0=vec3(.09,.19,.15),c1=vec3(.27,.54,.44),c2=vec3(.74,.90,.72),c3=vec3(.99,.97,.88),c4=vec3(.82,.92,1.);
-  vec3 col=mix(c0,c1,smoothstep(.15,.5,f));
-  col=mix(col,c2,smoothstep(.45,.75,f));
-  col=mix(col,c3,smoothstep(.72,.95,f)*.85);
-  col=mix(col,c4,smoothstep(.5,.9,fbm(p*1.3+w*2.-t))*.32);
-  vec2 lp=uMouse*.55;float glow=exp(-dot(uv-lp,uv-lp)*3.2);
-  col+=vec3(.50,.56,.46)*glow*.30;
-  float rr=r+(f-.5)*.20;
-  float z=sqrt(max(0.,1.-(rr/core)*(rr/core)));
-  col*=.80+.38*z;
-  col=mix(col,c3,pow(1.-z,1.5)*.55);
-  col+=(vec3(hash(gl_FragCoord.xy+fract(uTime)*91.7),hash(gl_FragCoord.yx+fract(uTime)*53.1),hash(gl_FragCoord.xy*1.7+fract(uTime)*17.3))-.5)*.20;
-  float edge=smoothstep(core,core-.13,rr);
-  float halo=exp(-max(rr-(core-.13),0.)*4.2)*.42*smoothstep(1.02,.78,r);
-  float a=edge+halo*(1.-edge);
-  col=mix(mix(c1,c2,.55),col,edge);
-  gl_FragColor=vec4(col*a,a);
+  vec2 st=gl_FragCoord.xy/uRes;
+  vec2 p=(gl_FragCoord.xy-.5*uRes)/uRes.y;
+  float t=uTime,d=edge(p,t,0.);
+  float f1=fbm(p*.9+vec2(t*.02,t*.015));
+  float f2=fbm(p*1.6-vec2(t*.03,0.)+f1);
+  vec3 lightC=mix(vec3(.53,.53,.64),vec3(.84,.83,.89),smoothstep(.2,.8,f2));
+  lightC=mix(lightC,vec3(.72,.70,.82),smoothstep(-.4,.6,p.y)*.25);
+  vec3 darkC=mix(vec3(.035,.035,.10),vec3(.13,.12,.29),smoothstep(.25,.85,f1));
+  darkC+=vec3(.10,.06,.17)*smoothstep(.45,-.35,p.y)*.35;
+  float side=smoothstep(-.022,.022,d);
+  vec3 col=mix(darkC,lightC,side);
+  col*=1.-.22*exp(-max(d,0.)*12.)*side;
+  vec3 dd=vec3(edge(p,t,-.0055),d,edge(p,t,.0055))-.012;
+  vec3 glint=exp(-(dd*dd)/(.0075*.0075));
+  float shimmer=.5+.5*fbm(vec2(dot(p,vec2(.85,-.52))*6.-t*.4,t*.1));
+  col+=glint*vec3(1.,.97,1.05)*shimmer*(.62+.8*uEnergy);
+  col+=vec3(.58,.58,.76)*exp(-abs(d)*9.)*.16;
+  vec3 rb=.5+.5*cos(6.2832*(p.x*1.4+t*.05+vec3(0.,.33,.67)));
+  col+=rb*exp(-abs(d-.026)/.022)*smoothstep(.2,-.45,p.y)*.26;
+  vec2 dm=p-uMouse;col+=vec3(.20,.20,.29)*exp(-dot(dm,dm)*3.)*(.32+.45*uEnergy)*mix(.45,1.,side);
+  col*=mix(.6,1.,smoothstep(1.3,.25,length((st-vec2(.6,.62))*vec2(1.,.9))));
+  col+=(hash(gl_FragCoord.xy+fract(t*7.3)*113.)-.5)*.085;
+  gl_FragColor=vec4(col,1.);
 }`;
-  const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null; };
+  const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); return gl.getShaderParameter(o, gl.COMPILE_STATUS) ? o : null; };
   const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS); if (!vs || !fs) return;
   const pr = gl.createProgram(); gl.attachShader(pr, vs); gl.attachShader(pr, fs); gl.linkProgram(pr);
   if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) return;
@@ -1099,34 +1101,28 @@ void main(){
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
   const loc = gl.getAttribLocation(pr, 'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   const U = n => gl.getUniformLocation(pr, n), uRes = U('uRes'), uTime = U('uTime'), uMouse = U('uMouse'), uEnergy = U('uEnergy');
-  gl.clearColor(0, 0, 0, 0);
-  const fit = () => { const d = Math.min(devicePixelRatio || 1, 2), r = cv.getBoundingClientRect(), w = Math.max(2, Math.round(r.width * d)), h = Math.max(2, Math.round(r.height * d)); if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; } gl.viewport(0, 0, cv.width, cv.height); };
+  // The look is soft and grainy, so the field renders at up to 1.25x; keeps it cheap on big retina screens.
+  const fit = () => { const k = Math.min(devicePixelRatio || 1, 1.25), r = cv.getBoundingClientRect(), w = Math.max(2, Math.round(r.width * k)), h = Math.max(2, Math.round(r.height * k)); if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; } gl.viewport(0, 0, cv.width, cv.height); };
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-  let mx = 0, my = 0, tx = 0, ty = 0, energy = 0, lx = null, ly = null, raf = 0, visible = true;
+  let mx = .35, my = .15, tx = mx, ty = my, energy = 0, lx = null, ly = null, raf = 0, visible = true;
   const t0 = performance.now(), still = reduce.matches;
-  const draw = (t) => { gl.clear(gl.COLOR_BUFFER_BIT); gl.uniform2f(uRes, cv.width, cv.height); gl.uniform1f(uTime, t); gl.uniform2f(uMouse, mx, my); gl.uniform1f(uEnergy, energy); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
-  const frame = (now) => {
-    raf = 0; const t = (now - t0) / 1000;
-    mx += (tx - mx) * .06; my += (ty - my) * .06; energy *= .95;
-    draw(t);
-    cv.style.transform = `translate3d(${(mx * 14 + Math.sin(t * .5) * 5).toFixed(2)}px, ${(-my * 14 + Math.cos(t * .4) * 6).toFixed(2)}px, 0)`;
-    run();
-  };
+  const draw = t => { gl.uniform2f(uRes, cv.width, cv.height); gl.uniform1f(uTime, t); gl.uniform2f(uMouse, mx, my); gl.uniform1f(uEnergy, energy); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); };
+  const frame = now => { raf = 0; mx += (tx - mx) * .07; my += (ty - my) * .07; energy *= .95; draw((now - t0) / 1000 + 20); run(); };
   const run = () => { if (!raf && visible && !document.hidden && !still) raf = requestAnimationFrame(frame); };
   const onMove = e => {
     if (e.pointerType && e.pointerType !== 'mouse') return;
-    const r = cv.getBoundingClientRect(), R = Math.max(innerWidth, innerHeight) * .55;
-    tx = clamp((e.clientX - (r.left + r.width / 2)) / R, -1, 1); ty = clamp(-(e.clientY - (r.top + r.height / 2)) / R, -1, 1);
+    const r = cv.getBoundingClientRect();
+    tx = clamp((e.clientX - r.left - r.width / 2) / r.height, -1.6, 1.6); ty = clamp(-(e.clientY - r.top - r.height / 2) / r.height, -.9, .9);
     if (lx !== null) energy = Math.min(1, energy + Math.hypot(e.clientX - lx, e.clientY - ly) * .004);
     lx = e.clientX; ly = e.clientY;
   };
   const onVis = () => run();
-  const onResize = () => { fit(); if (still) draw(2.5); };
+  const onResize = () => { fit(); if (still) draw(24); };
   const io = new IntersectionObserver(es => { visible = es[0].isIntersecting; run(); }); io.observe(cv);
   fit();
-  if (still){ draw(2.5); } else { window.addEventListener('pointermove', onMove, { passive:true }); document.addEventListener('visibilitychange', onVis); run(); }
+  if (still) draw(24); else { window.addEventListener('pointermove', onMove, { passive:true }); document.addEventListener('visibilitychange', onVis); run(); }
   window.addEventListener('resize', onResize);
-  orbStop = () => { cancelAnimationFrame(raf); raf = 0; io.disconnect(); window.removeEventListener('pointermove', onMove); window.removeEventListener('resize', onResize); document.removeEventListener('visibilitychange', onVis); const x = gl.getExtension('WEBGL_lose_context'); if (x) x.loseContext(); };
+  heroStop = () => { cancelAnimationFrame(raf); raf = 0; io.disconnect(); window.removeEventListener('pointermove', onMove); window.removeEventListener('resize', onResize); document.removeEventListener('visibilitychange', onVis); const x = gl.getExtension('WEBGL_lose_context'); if (x) x.loseContext(); };
 }
 
 /* ---------- Cursor circle: follows the mouse; a glass disc at rest, grows and inverts the page behind it over anything clickable ---------- */
