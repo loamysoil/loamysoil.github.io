@@ -17,7 +17,6 @@
 <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="vendor/lenis.css">
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" as="image" href="images/hero/hero.jpg">
 
 <style>
 /* ---------- Fonts (self-hosted Inter and Roboto Mono, SIL OFL / Apache 2.0) ---------- */
@@ -118,19 +117,27 @@ main{min-height:100dvh}
 .view{padding-top:var(--nav-h)}
 
 /* ---------- Hero: one layered stage (photo underneath, type and buttons on top) ---------- */
-.hero{padding-top:clamp(12px,2vw,24px)}
-.hero-stage{position:relative;display:flex;align-items:flex-end;isolation:isolate;overflow:hidden;border-radius:var(--r);color:#fff;min-height:clamp(430px,68dvh,720px)}
-.hero-bg{position:absolute;inset:0;z-index:-1;overflow:hidden;border-radius:inherit;background:#3b4a35}
-.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:50% 22%;transform:scale(1.1)}
-.hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(6,10,7,.66) 0%,rgba(6,10,7,.34) 48%,rgba(6,10,7,0) 88%)}
-.hero-over{padding:clamp(28px,4.5vw,72px);max-width:min(100%,1100px)}
-.hero h1{font-size:clamp(1.6rem,4.2vw,4rem);line-height:1;letter-spacing:-.05em;font-weight:600;max-width:22ch;text-wrap:balance}
-.hero h1 em{font-style:italic;font-weight:500;padding-bottom:.08em}
-.hero-over p{margin-top:clamp(18px,3vh,30px);max-width:46ch;color:rgba(255,255,255,.94);font-size:clamp(1rem,1.25vw,1.15rem)}
-.hero-cta{margin-top:clamp(22px,4vh,38px);display:flex;gap:12px;flex-wrap:wrap}
-.hero .btn.primary{background:#fff;border-color:#fff;color:#0C0D0E}
-.hero .btn.ghost{color:#fff;border-color:rgba(255,255,255,.8);background:rgba(8,12,9,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-@media (prefers-reduced-transparency:reduce){.hero .btn.ghost{background:rgba(8,12,9,.6);backdrop-filter:none;-webkit-backdrop-filter:none}}
+/* Hero: the mark as an isometric line figure (vendor/hairline) large on the right, the copy on a card at the lower left.
+   initHero() lines the figure up so the bottom edge of the mark's top-left bar runs into the card's top-right corner. */
+.hero{position:relative;min-height:max(620px,calc(100svh - var(--nav-h)));overflow:hidden}
+.hero-fig{position:absolute;right:calc(var(--gutter) * -1.4);top:44%;transform:translateY(calc(-50% + var(--lead,0px)));width:min(58vw,900px);
+  --hairline-plate:var(--bg);--hairline-hi:var(--ink);--hairline-edge:color-mix(in srgb,var(--ink) 50%,var(--bg));
+  --hairline-mid:color-mix(in srgb,var(--ink) 30%,var(--bg));--hairline-lo:color-mix(in srgb,var(--ink) 15%,var(--bg));--hairline-stroke:1}
+.hero-copy{position:absolute;left:var(--gutter);bottom:clamp(32px,7vh,72px);width:min(690px,calc(100% - 2 * var(--gutter)));z-index:2;pointer-events:none}
+.hero-copy>*{pointer-events:auto}
+.hero-card{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr;gap:clamp(40px,7vh,88px) 20px;padding:clamp(24px,3vw,40px);border-radius:var(--r);background:var(--card);border:1px solid var(--card-line);box-shadow:var(--card-shadow)}
+.hero h1{grid-column:1/-1;font-size:clamp(1.6rem,4.2vw,4rem);line-height:1;letter-spacing:-.05em;font-weight:600}
+.hero-card p{grid-column:1/2;align-self:end;color:var(--mute);font-size:1rem;text-wrap:balance}
+.hero-cta{grid-column:2/3;align-self:end;justify-self:end;display:flex;gap:8px;margin-right:calc(clamp(24px,3vw,40px) * -.4)}
+@media (max-width:1260px){
+  .hero{min-height:auto;display:flex;flex-direction:column;padding-top:clamp(12px,3vw,32px)}
+  .hero-fig{position:relative;right:auto;top:auto;transform:none;width:min(100%,640px);margin:0 auto}
+  .hero-copy{position:relative;left:auto;bottom:auto;width:min(100%,690px);margin:clamp(28px,6vw,48px) auto 0}
+  .hero-card{grid-template-columns:1fr;gap:24px}
+  .hero h1{font-size:clamp(2.4rem,9vw,4rem)}
+  .hero-cta{grid-column:1/2;justify-self:start;margin-right:0}
+}
+@media (max-width:400px){.hero-card p{font-size:.9375rem}}
 
 /* ---------- Section heads ---------- */
 .sec{padding-block:var(--gap)}
@@ -327,18 +334,18 @@ html.cursor-on iframe{cursor:auto!important}
   .js .rv{opacity:0;transform:translateY(34px);filter:blur(16px);transition:opacity 1.2s var(--ease),transform 1.6s var(--ease),filter 1.2s var(--ease);transition-delay:var(--d,0s)}
   .js .rv.in{opacity:1;transform:none;filter:blur(0)}
   .w{display:inline-block;animation:wordin 1.5s var(--ease) both;animation-delay:calc(.08s + min(calc(var(--i) * 70ms),1000ms))}
-  .hero-over p{animation:rise 1.5s var(--ease) .3s both}
+  .hero-card p{animation:rise 1.5s var(--ease) .3s both}
   .hero-cta{animation:rise 1.5s var(--ease) .42s both}
-  .hero-bg{animation:unmask 1.8s var(--ease) both}
+  .hero-fig{animation:fadein 1.6s var(--ease) .15s both}
   .about-photo.first{animation:unmask 1.8s var(--ease) .1s both}
   @supports (animation-timeline:scroll()){
-    .hero-bg img{animation:depth linear both;animation-timeline:scroll(root);animation-range:0 100vh}
   }
   .js .stat::before{transform:scaleY(0);transform-origin:top;transition:transform 1.6s var(--ease);transition-delay:var(--d,0s)}
   .js .stat.in::before{transform:scaleY(1)}
   .view-in{animation:fadeview .9s var(--ease) both}
 }
 @keyframes wordin{from{opacity:0;transform:translateY(.4em);filter:blur(14px)}}
+@keyframes fadein{from{opacity:0}}
 @keyframes rise{from{opacity:0;transform:translateY(30px);filter:blur(14px)}}
 @keyframes unmask{from{opacity:0;clip-path:inset(0 0 100% 0);filter:blur(26px)}}
 @keyframes depth{to{transform:scale(1.1) translateY(-4%)}}
@@ -375,10 +382,6 @@ html.cursor-on iframe{cursor:auto!important}
   .menu-btn{display:block}
   .brand svg{height:30px;width:30px}
   :root{--r:16px}
-  .hero-stage{min-height:max(440px,66dvh);align-items:flex-end}
-  .hero-bg::after{background:linear-gradient(0deg,rgba(6,10,7,.66) 0%,rgba(6,10,7,.34) 48%,rgba(6,10,7,0) 88%)}
-  .hero-bg img{object-position:60% 45%}
-  .hero-over{padding:26px 22px}
   .about-photo{aspect-ratio:4/3;margin-bottom:28px}
   .car-btns{display:none}
   .card{flex-basis:80vw}
@@ -459,6 +462,7 @@ html.cursor-on iframe{cursor:auto!important}
 </footer>
 
 <script src="vendor/lenis.min.js"></script>
+<script src="vendor/hairline/kernel.js"></script>
 <script>
 document.documentElement.classList.add('js');
 
@@ -579,9 +583,9 @@ const logo = ([name,file,w,h,ms]) => `<div class="logo rv" role="img" aria-label
 function viewHome(){
   return `
   <section class="wrap hero" aria-labelledby="h1">
-    <div class="hero-stage">
-      <div class="hero-bg"><img src="${IMG}hero/hero.jpg" alt="Low view across tall grass to a sand bunker and mature trees on a golf course" width="2400" height="1800" fetchpriority="high"></div>
-      <div class="hero-over">
+    <div class="hero-fig" id="hero-fig"></div>
+    <div class="hero-copy">
+      <div class="hero-card">
         <h1 id="h1">Hi, I’m Liam</h1>
         <p>Graphic Designer at Arccos Golf, working across product launches, packaging, brand campaigns and web.</p>
         <div class="hero-cta">
@@ -845,6 +849,7 @@ function route(){
   observe();
   initStats();
   initCarousel();
+  initHero();
 }
 
 /* One wiring for every side-scroller: arrows, edge-aware disabled state, and mouse drag. */
@@ -1078,6 +1083,39 @@ if (/^#\//.test(location.hash)){ const h = location.hash.slice(2); history.repla
   window.addEventListener('blur', () => set('down', false));
 })();
 
+
+/* ---------- Hero figure: the mark, extruded, as a Hairline line figure (vendor/hairline, MIT). lift.js registers itself
+   through window.hairline; initHero() mounts it whenever the home view renders and lines it up with the card. ---------- */
+let heroFigure = null, heroHandle = null;
+window.hairline = (figure) => { heroFigure = figure; initHero(); };
+function heroLead(){
+  const fig = document.getElementById('hero-fig'), card = document.querySelector('.hero-card');
+  const sil = fig && fig.querySelector('path.sil');
+  if (!sil || !card || matchMedia('(max-width:1260px)').matches){ fig?.style.removeProperty('--lead'); return; }
+  const M = sil.getScreenCTM(), n = sil.getAttribute('d').match(/-?[\d.]+/g).map(Number), pts = [];
+  for (let i = 0; i < n.length; i += 2){ const q = new DOMPoint(n[i], n[i + 1]).matrixTransform(M); pts.push([q.x, q.y]); }
+  const minx = Math.min(...pts.map((p) => p[0])), bl = pts.filter((p) => p[0] < minx + 1.5).reduce((a, b) => (b[1] > a[1] ? b : a));
+  const c = card.getBoundingClientRect(), now = parseFloat(fig.style.getPropertyValue('--lead')) || 0;
+  fig.style.setProperty('--lead', (now + c.top - (bl[1] + (bl[0] - c.right) * 0.5)).toFixed(1) + 'px');
+}
+function initHero(){
+  if (heroHandle){ heroHandle.destroy(); heroHandle = null; }
+  const stage = document.getElementById('hero-fig');
+  if (!stage || !heroFigure || !window.HL) return;
+  HL.inject(document);
+  stage.replaceChildren();
+  stage.setAttribute('data-hairline', heroFigure.name);
+  stage.setAttribute('role', 'img');
+  stage.setAttribute('aria-label', 'Liam Owen’s mark, drawn in three solids; the part under the pointer lifts out');
+  const svg = HL.mk('svg', { viewBox: '0 0 400 320', 'aria-hidden': 'true' }, stage);
+  let t = 'rest';
+  heroHandle = heroFigure.mount({ stage, svg, read: { get textContent(){ return t; }, set textContent(v){ t = v; } } }, heroFigure.range[1]);
+  // measure again once fonts and layout have settled
+  heroLead(); setTimeout(heroLead, 60); setTimeout(heroLead, 1800);
+}
+addEventListener('resize', heroLead);
+document.fonts.ready.then(heroLead);
+
 window.addEventListener('popstate', route);
 route();
 
@@ -1101,5 +1139,6 @@ matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncSeg);
 document.getElementById('theme').addEventListener('click', () => setTheme(isDark() ? 'light' : 'dark'));
 seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.mode)));
 </script>
+<script type="module" src="vendor/hairline/lift.js"></script>
 </body>
 </html>
