@@ -124,23 +124,22 @@ main{min-height:100dvh}
 .hero-fig{position:absolute;right:calc(var(--gutter) * -1.4);top:44%;transform:translateY(calc(-50% + var(--lead,0px)));width:min(58vw,900px);
   --hairline-plate:var(--bg);--hairline-hi:var(--ink);--hairline-edge:color-mix(in srgb,var(--ink) 50%,var(--bg));
   --hairline-mid:color-mix(in srgb,var(--ink) 30%,var(--bg));--hairline-lo:color-mix(in srgb,var(--ink) 15%,var(--bg));--hairline-stroke:1}
-.hero-copy{position:absolute;left:var(--gutter);bottom:clamp(32px,7vh,72px);width:min(690px,calc(100% - 2 * var(--gutter)));z-index:2;pointer-events:none}
+.hero-copy{position:absolute;left:var(--gutter);bottom:clamp(32px,7vh,72px);width:min(600px,calc(100% - 2 * var(--gutter)));z-index:2;pointer-events:none}
 .hero-copy>*{pointer-events:auto}
-.hero-card{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto 1fr;gap:clamp(40px,7vh,88px) 20px;padding:clamp(24px,3vw,40px);border-radius:var(--r);background:var(--card);border:1px solid var(--card-line)}
-.hero h1{grid-column:1/-1;font-size:clamp(1.6rem,4.2vw,4rem);line-height:1;letter-spacing:-.05em;font-weight:600}
-.hero-card p{grid-column:1/2;align-self:end;color:var(--mute);font-size:1rem;text-wrap:balance}
-.hero-cta{grid-column:2/3;align-self:end;justify-self:end;display:flex;flex-direction:column;align-items:stretch;gap:8px}
-.hero-cta .btn{justify-content:center}
+.hero-card{display:grid;gap:clamp(20px,2vw,28px);padding:clamp(24px,3vw,44px);border-radius:var(--r);background:var(--card);border:1px solid var(--card-line)}
+.hero h1{font-size:clamp(1.6rem,4.2vw,4rem);line-height:1;letter-spacing:-.05em;font-weight:600}
+.hero-card p{color:var(--mute);font-size:clamp(1rem,1.15vw,1.12rem);text-wrap:balance}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(4px,.6vw,10px)}
 @media (max-width:1260px){
   .hero{min-height:auto;display:flex;flex-direction:column;padding-top:clamp(12px,3vw,32px)}
   .hero-fig{position:relative;right:auto;top:auto;transform:none;width:min(100%,640px);margin:0 auto}
   .hero-copy{position:relative;left:auto;bottom:auto;width:min(100%,690px);margin:clamp(28px,6vw,48px) auto 0}
-  .hero-card{grid-template-columns:1fr;gap:24px}
+  .hero-card{gap:24px}
   .hero h1{font-size:clamp(2.4rem,9vw,4rem)}
-  .hero-cta{grid-column:1/2;justify-self:start;flex-direction:row}
-  .hero-cta .primary{order:-1}
+  .hero-cta{margin-top:0}
 }
 @media (max-width:400px){.hero-card p{font-size:.9375rem}}
+@media (max-width:360px){.nav .wrap{padding-left:12px;gap:4px}.nav-links a{padding:9px 10px}.theme{width:34px}}
 
 /* ---------- Section heads ---------- */
 .sec{padding-block:var(--gap)}
@@ -380,9 +379,8 @@ html.cursor-on iframe{cursor:auto!important}
   body{font-size:16px}
   .shoot{--mh:clamp(300px,50dvh,400px)}
   .shoot-head{display:none}
-  .hide-sm{display:none}
-  .nav-links{display:none}
-  .menu-btn{display:block}
+  .nav-links a{padding:9px 12px}
+  .brand svg{height:26px;width:26px}
   .brand svg{height:30px;width:30px}
   :root{--r:16px}
   .about-photo{aspect-ratio:4/3;margin-bottom:28px}
@@ -592,8 +590,8 @@ function viewHome(){
         <h1 id="h1">Hi, I’m Liam</h1>
         <p>Graphic Designer at Arccos Golf, working across product launches, packaging, brand campaigns and web.</p>
         <div class="hero-cta">
-          <a class="btn ghost" href="resume/LiamOwen_GraphicDesigner_Resume.pdf" target="_blank" rel="noopener">Resume</a>
           <a class="btn primary" href="/#work" data-scroll="work">View Work ${arrow}</a>
+          <a class="btn ghost" href="resume/LiamOwen_GraphicDesigner_Resume.pdf" target="_blank" rel="noopener">Resume</a>
         </div>
       </div>
     </div>
