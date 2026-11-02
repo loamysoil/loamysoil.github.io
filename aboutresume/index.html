@@ -15,6 +15,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://liamowen.org/aboutresume">
 <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="vendor/lenis.css">
 <link rel="preload" href="fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="images/hero/hero.jpg">
 
@@ -48,6 +49,7 @@
 
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html.lenis{scroll-behavior:auto}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
 img{display:block;max-width:100%;height:auto}
 a{color:inherit;text-decoration:none}
@@ -457,6 +459,7 @@ html.cursor-on iframe{cursor:auto!important}
   </div>
 </footer>
 
+<script src="vendor/lenis.min.js"></script>
 <script>
 document.documentElement.classList.add('js');
 
@@ -757,13 +760,13 @@ document.getElementById('drawer-soc').innerHTML = socialItems();
 const drawer = document.getElementById('drawer'), menuBtn = document.getElementById('menu-btn'), drawerClose = document.getElementById('drawer-close');
 function openMenu(){
   drawer.classList.add('open'); menuBtn.setAttribute('aria-expanded','true');
-  document.documentElement.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden'; lenis?.stop();
   drawerClose.focus({preventScroll:true});
 }
 function closeMenu(toButton = true){
   if (!drawer.classList.contains('open')) return;
   drawer.classList.remove('open'); menuBtn.setAttribute('aria-expanded','false');
-  document.documentElement.style.overflow = '';
+  document.documentElement.style.overflow = ''; lenis?.start();
   if (toButton) menuBtn.focus({preventScroll:true});
 }
 menuBtn.addEventListener('click', openMenu);
@@ -784,6 +787,10 @@ matchMedia('(min-width: 768px)').addEventListener('change', e => { if (e.matches
 /* ---------- Router ---------- */
 const main = document.getElementById('main');
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+/* Smooth wheel scrolling: Lenis with the same settings as Framer's Smooth Scroll at intensity 10 (as on halaska.com),
+   a 1s exponential ease-out. Touch scrolling stays native; off with reduced motion; the lightbox and menu scroll on their own. */
+const lenis = (!reduce.matches && window.Lenis) ? new Lenis({ duration: 1, easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)), autoRaf: true, prevent: n => !!(n.closest && n.closest('.lb, .drawer')) }) : null;
+const scrollToY = (y, smooth) => lenis ? lenis.scrollTo(y, { immediate: !smooth, force: true }) : window.scrollTo({ top: y, behavior: smooth ? 'smooth' : 'instant' });
 let io;
 
 /* Real paths, same structure as the old site: /, /aboutresume, /work/<slug> */
@@ -813,7 +820,7 @@ function setMeta(title, desc, path, img){
 }
 function go(url){
   const u = new URL(url, location.href);
-  if (u.pathname === location.pathname && !u.hash){ window.scrollTo({top:0, behavior: reduce.matches ? 'auto' : 'smooth'}); return; }
+  if (u.pathname === location.pathname && !u.hash){ scrollToY(0, !reduce.matches); return; }
   history.pushState({}, '', u.pathname + u.search + u.hash);
   route();
 }
@@ -834,7 +841,7 @@ function route(){
   setMeta(title, desc, path, img);
   countView(path, title);
   document.querySelectorAll('[data-nav]').forEach(l => l.dataset.nav === nav ? l.setAttribute('aria-current','page') : l.removeAttribute('aria-current'));
-  window.scrollTo({top:0, behavior:'instant'});
+  scrollToY(0, false);
   main.querySelectorAll('.hero h1, .statement').forEach(splitWords);
   observe();
   initStats();
@@ -965,7 +972,7 @@ document.addEventListener('click', e => {
   e.preventDefault();
   if (a.dataset.scroll){
     const onHome = segs().length === 0; if (!onHome) go('/');
-    setTimeout(() => document.getElementById(a.dataset.scroll)?.scrollIntoView({behavior: reduce.matches ? 'auto' : 'smooth'}), onHome ? 0 : 80);
+    setTimeout(() => { const el = document.getElementById(a.dataset.scroll); if (!el) return; if (lenis) lenis.scrollTo(el, { force: true }); else el.scrollIntoView({behavior: reduce.matches ? 'auto' : 'smooth'}); }, onHome ? 0 : 80);
   } else go(u.pathname + u.search + u.hash);
 });
 
@@ -1014,14 +1021,14 @@ function lbOpen(img){
   lbFrom = img;
   lb.querySelector('.lb-prev').hidden = lb.querySelector('.lb-next').hidden = lbList.length < 2;
   lb.classList.add('open');
-  document.documentElement.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden'; lenis?.stop();
   lbShow(lbList.indexOf(img));
   lb.querySelector('.lb-close').focus({preventScroll:true});
 }
 function lbClose(){
   if (!lb.classList.contains('open')) return;
   lb.classList.remove('open'); lbImg.classList.remove('ready');
-  document.documentElement.style.overflow = '';
+  document.documentElement.style.overflow = ''; lenis?.start();
   if (lbFrom) lbFrom.focus({preventScroll:true});
 }
 main.addEventListener('click', e => { const im = e.target.closest('img[data-zoom]'); if (im) lbOpen(im); });
