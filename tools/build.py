@@ -11,7 +11,7 @@ right page from the address. Run this after editing index.html or the project li
 import html, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SITE = "https://liamowen.org"
+SITE = "https://liamowen.net"
 TODAY = "2026-10-05"
 
 src = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://liamowen.org/sitemap.xml
+Sitemap: https://liamowen.net/sitemap.xml
